@@ -3,10 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { ContentSwitch } from './ContentSwitch';
 
-const supabase = createClient(
-    'https://skuqpcynlrdjneayvaen.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrdXFwY3lubHJkam5lYXl2YWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkxNTg4MDQsImV4cCI6MjA0NDczNDgwNH0.rm9IcOs9_dTHiNdA2hhsy292KmGiJGGmQnIyLyqJAS4'
-);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const Welcome = () => {
     const [propositions, setPropositions] = useState<any[]>([]);
@@ -46,8 +46,8 @@ export const Welcome = () => {
                 }}
             >
                 <img
-                    src="/lvira.png"
-                    width="150"
+                    src="/Lv_inbox/lvira.png"
+                    width="158"
                     height="74"
                     style={{
                         position: 'absolute',
@@ -70,7 +70,7 @@ export const Welcome = () => {
                         Lvira's Partybox
                         <img
                             style={{ marginLeft: '2rem' }}
-                            src="/512.webp"
+                            src="/Lv_inbox/512.webp"
                             alt="🥳"
                             width="100"
                             height="100"
