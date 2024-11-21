@@ -1,4 +1,4 @@
-import { Fade, Box, Button, Badge, Divider } from '@mui/material';
+import { Fade, Box, Button, Badge } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import InboxIcon from '@mui/icons-material/Inbox';
 import MailIcon from '@mui/icons-material/Mail';

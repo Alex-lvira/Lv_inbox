@@ -118,13 +118,7 @@ export const CreateProposition = () => {
                     }}
                 />
                 <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                    <MenuItem
-                        onClick={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            handleClose(event.target.textContent);
-                        }}
-                    >
-                        Profile
-                    </MenuItem>
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
                     <MenuItem onClick={handleClose}>My account</MenuItem>
                     <MenuItem onClick={handleClose}>Logout</MenuItem>
                 </Menu>
