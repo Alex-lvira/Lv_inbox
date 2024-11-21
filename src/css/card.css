@@ -1,0 +1,15 @@
+@keyframes pulse {
+    0% {
+        background-color: white;
+    }
+    50% {
+        background-color: #9bdb97;
+    }
+    100% {
+        background-color: white;
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
