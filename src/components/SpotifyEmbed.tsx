@@ -57,7 +57,7 @@ export const SpotifyEmbeds = ({
                     sx={{
                         fontFamily: 'Gilroy-Regular',
                         fontSize: '24px',
-                        color: '#fff'
+                        color: '#ffffff'
                     }}
                 >
                     Veckans mix:
