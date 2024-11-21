@@ -1,33 +1,52 @@
 import { Box, Fade, Typography } from '@mui/material';
-import { createClient } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 import { ContentSwitch } from './ContentSwitch';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { SpotifyEmbeds } from './SpotifyEmbed';
+import { supabase } from '../libs/supabase/supabaseClient';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 export const Welcome = () => {
     const [propositions, setPropositions] = useState<any[]>([]);
-    const [content, setContent] = useState<number>(0);
+    const [embeds, setEmbeds] = useState<any[]>([]);
+    const [content, setContent] = useState(0);
+
+    const startOfCurrentWeek = startOfWeek(new Date(), { weekStartsOn: 1 }); // Assuming the week starts on Monday
+    const endOfCurrentWeek = endOfWeek(new Date(), { weekStartsOn: 1 });
 
     const updateLikes = async (id: string, likes: number) => {
         const { error } = await supabase.from('Proposition').update({ likes: likes }).eq('id', id);
-        console.log(error);
+        console.error(error);
         getpropositions();
     };
 
     useEffect(() => {
         getpropositions();
+        getEmbeds();
     }, []);
 
-    console.log(propositions);
+    async function getEmbeds() {
+        const { data, error } = await supabase
+            .from('SongsOfTheWeek')
+            .select()
+            .gte('created_at', startOfCurrentWeek.toISOString())
+            .lte('created_at', endOfCurrentWeek.toISOString());
+
+        if (data) {
+            const shuffledData = data.sort(() => 0.5 - Math.random());
+            const limitedData = shuffledData.slice(0, 7);
+            setEmbeds(limitedData);
+        }
+        if (error) console.error(error);
+    }
 
     async function getpropositions() {
         const { data } = await supabase.from('Proposition').select();
         if (data) setPropositions(data);
     }
+
+    const refreshSongs = async () => {
+        await getEmbeds();
+    };
 
     return (
         <Fade in={true} timeout={2000}>
@@ -67,7 +86,7 @@ export const Welcome = () => {
                             fontFamily: 'Gilroy-SemiBold'
                         }}
                     >
-                        Lvira's Partybox
+                        Lvira's Partyhub
                         <img
                             style={{ marginLeft: '2rem' }}
                             src="/Lv_inbox/512.webp"
@@ -77,7 +96,9 @@ export const Welcome = () => {
                         ></img>
                     </Typography>
                 )}
+                {content === 0 && <SpotifyEmbeds refreshSongs={refreshSongs} props={embeds} />}
                 <ContentSwitch
+                    refresh={() => getpropositions()}
                     page={content}
                     setContent={(c: number) => setContent(c)}
                     propositions={propositions}

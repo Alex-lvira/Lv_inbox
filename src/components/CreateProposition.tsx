@@ -1,51 +1,76 @@
 import {
     Box,
     Button,
-    IconButton,
-    InputAdornment,
-    Menu,
+    FormControl,
+    InputLabel,
     MenuItem,
+    Select,
     Switch,
     TextField,
     Typography
 } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { supabase } from '../libs/supabase/supabaseClient';
 
-export const CreateProposition = () => {
-    const [summary, setSummary] = React.useState('');
-    const [name, setName] = React.useState('');
-    const [url, setUrl] = React.useState('');
-    const [checked, setChecked] = React.useState(false);
-    const [error, setError] = React.useState(false);
-
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = (name: any) => {
-        console.log(name);
-        setAnchorEl(null);
-    };
-
-    function setValidUrl(url: any) {
-        setUrl(url);
-        try {
-            if (!url.includes('https')) {
-                new URL('https://' + url);
-            } else {
-                new URL(url);
-            }
-            return setError(false);
-        } catch (err) {
-            return setError(true);
-        }
-    }
+export const CreateProposition = ({
+    setContent,
+    refresh
+}: {
+    setContent: (content: number) => void;
+    refresh: () => void;
+}) => {
+    const [summary, setSummary] = useState('');
+    const [url, setUrl] = useState('');
+    const [checked, setChecked] = useState(false);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [sentBy, setSentBy] = useState('');
+    const [date, setDate] = useState<Date | null>(null);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
+    };
+
+    const validateImageUrl = (url: string) => {
+        return /\.(png|webp|gif|jpeg|jpg)$/.test(url);
+    };
+
+    const handleSend = async () => {
+        setError(false);
+        setErrorMessage('');
+
+        if (!validateImageUrl(url)) {
+            setError(true);
+            setErrorMessage('Bildlänk måste vara i formaten .png, .webp, .gif eller .jpeg');
+            return;
+        }
+
+        const links = url.split(',').map((link) => link.trim());
+        const propositionData = {
+            type: 1,
+            proposition: summary,
+            date: date ? date.toISOString() : null,
+            jeopardyType: null,
+            reporter: sentBy,
+            image: links[0] ? links[0] : null,
+            standing: checked,
+            links: links
+        };
+
+        try {
+            const { error } = await supabase.from('Proposition').insert([propositionData]);
+            if (error) {
+                console.error('Error inserting data:', error);
+                throw error;
+            } else {
+                refresh();
+                setContent(1);
+            }
+            // Optionally, clear the form or show a success message
+        } catch (error) {
+            console.error('Error inserting data:', error);
+        }
     };
 
     return (
@@ -90,38 +115,39 @@ export const CreateProposition = () => {
                     }}
                 />
                 <TextField
+                    sx={{ width: '235px' }}
                     color="secondary"
                     value={url}
-                    label="Länk"
+                    label="Bildlänk"
                     error={error}
+                    helperText={error ? errorMessage : ''}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setValidUrl(event.target.value);
+                        setUrl(event.target.value);
                     }}
                 />
-                <TextField
-                    sx={{ width: '235px' }}
-                    label="Länk"
-                    value={name}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setName(event.target.value);
-                    }}
-                    slotProps={{
-                        input: {
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={handleClick}>
-                                        <ExpandMoreIcon />
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }
-                    }}
-                />
-                <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
-                </Menu>
+                <FormControl sx={{ mt: 2, width: '235px' }}>
+                    <InputLabel>Inskickare</InputLabel>
+                    <Select
+                        value={sentBy}
+                        onChange={(e) => setSentBy(e.target.value)}
+                        label="Inskickare"
+                    >
+                        {[
+                            'Samuel',
+                            'Alex',
+                            'Hanna',
+                            'Jonas',
+                            'Jessica',
+                            'Jenny',
+                            'Christopher',
+                            'Jacob'
+                        ].map((name) => (
+                            <MenuItem key={name} value={name}>
+                                {name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 <Box
                     sx={{
                         display: 'flex',
@@ -131,7 +157,12 @@ export const CreateProposition = () => {
                         ml: '93px'
                     }}
                 >
-                    <DatePicker disabled={checked} sx={{ width: '235px' }} />
+                    <DatePicker
+                        disabled={checked}
+                        sx={{ width: '235px' }}
+                        value={date}
+                        onChange={(newDate) => setDate(newDate)}
+                    />
                     <Box>
                         <Switch checked={checked} onChange={handleChange} />
                         <Typography sx={{ fontFamily: 'Gilroy-Regular', color: '#273036' }}>
@@ -147,6 +178,7 @@ export const CreateProposition = () => {
                         fontFamily: 'Gilroy-Regular'
                     }}
                     variant="contained"
+                    onClick={handleSend}
                 >
                     Skicka!
                 </Button>

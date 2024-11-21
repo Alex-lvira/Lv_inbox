@@ -2,9 +2,11 @@
     0% {
         background-color: white;
     }
+
     50% {
         background-color: #9bdb97;
     }
+
     100% {
         background-color: white;
     }
@@ -12,4 +14,41 @@
 
 .pulse-animation {
     animation: pulse 2s infinite;
+}
+
+button {
+    transition: 0.25s;
+
+    &:hover,
+    &:focus {
+        border-color: transparent;
+        color: #7aec76;
+    }
+}
+
+.pulses {
+    --color: #494848;
+    --hover: #20752e;
+    background-color: #273036;
+    border-radius: '6px';
+    border: none; /* Remove border */
+    box-shadow: none;
+    border-radius: 6px;
+    height: 20px;
+    transition:
+        color 0.25s,
+        box-shadow 0.25s,
+        transform 0.25s; /* Add transition for box-shadow and transform */
+}
+
+.pulses:hover,
+.pulses:focus {
+    box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+    transform: translateY(-0.25em);
+}
+
+@keyframes pulses {
+    0% {
+        box-shadow: 0 0 0 0 var(--hover);
+    }
 }

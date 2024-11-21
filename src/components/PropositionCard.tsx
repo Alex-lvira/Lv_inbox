@@ -66,7 +66,7 @@ export const PropositionCard = ({
             {image ? (
                 <CardMedia component="img" height="140" image={image} />
             ) : (
-                <CardMedia component="img" height="140" image={'/513.webp'} />
+                <CardMedia component="img" height="140" image={'/Lv_inbox//513.webp'} />
             )}
             <CardContent sx={{ minHeight: '113px' }}>
                 <Typography

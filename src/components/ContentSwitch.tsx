@@ -10,12 +10,14 @@ export const ContentSwitch = ({
     page,
     propositions,
     setContent,
-    updateLikes
+    updateLikes,
+    refresh
 }: {
     page: number;
     propositions: any[];
     setContent: (c: number) => void;
     updateLikes: (id: string, likes: number) => void;
+    refresh: () => void;
 }) => {
     switch (page) {
         case 0:
@@ -49,14 +51,14 @@ export const ContentSwitch = ({
                             sx={{
                                 textTransform: 'none',
                                 backgroundColor: '#273036',
-                                fontSize: '48px',
+                                fontSize: '32px',
                                 width: '265px',
                                 borderRadius: '10px',
                                 fontFamily: 'Gilroy-Regular'
                             }}
                             variant="contained"
                         >
-                            Inbox
+                            Aktiviteter
                         </Button>
                         <Button
                             onClick={() => setContent(2)}
@@ -65,12 +67,13 @@ export const ContentSwitch = ({
                                     <MailIcon sx={{ fontSize: '48px !important' }} />
                                 </>
                             }
-                            size="large"
+                            size="medium"
                             sx={{
                                 textTransform: 'none',
                                 backgroundColor: '#273036',
-                                fontSize: '48px',
+                                fontSize: '40px',
                                 width: '265px',
+                                height: '72px',
                                 borderRadius: '10px',
                                 fontFamily: 'Gilroy-Regular'
                             }}
@@ -144,7 +147,7 @@ export const ContentSwitch = ({
                         justifyContent: 'flex-start'
                     }}
                 >
-                    <CreateProposition />
+                    <CreateProposition setContent={setContent} refresh={refresh} />
                     <Button
                         sx={{
                             textTransform: 'none',
