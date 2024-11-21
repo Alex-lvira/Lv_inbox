@@ -78,7 +78,7 @@ export const SpotifyEmbeds = ({
                     sx={{
                         fontFamily: 'Gilroy-Regular',
                         fontSize: '11px',
-                        color: '#fff',
+                        color: '#ffffff',
                         mt: '-18px',
                         opacity: 0.7,
                         ml: '2px'
